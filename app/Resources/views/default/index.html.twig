@@ -1,0 +1,85 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a href="#">Ladbrokes Web App</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+
+    <!-- Page Content -->
+    <div class="container">
+
+        <div class="row">
+
+            <div class="col-md-3">
+                <p class="lead">Ladbrokes</p>
+                <div class="list-group">
+                    <a href="/" class="list-group-item">List next 5 races</a>
+                    {% for type in types %}
+
+                        <a href="/?type={{ type }}" class="list-group-item">{{ type }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            <div class="col-md-9">
+
+
+
+                <div class="row">
+
+                    {% for race in races %}
+                        <div class="col-sm-4 col-lg-4 col-md-4">
+                            <div class="thumbnail">
+
+                                <div class="caption">
+                                    <h4 class="pull-right">{{ race.code }}</h4>
+                                    <h4><a href="#">{{ race.meeting }}</a>
+                                    </h4>
+                                    <p>See more about the race. Click <a target="_blank" href="/raceData?code={{ race.code }}">here</a>.</p>
+
+                                    <div class="ratings">
+                                        <p class="pull-right">Closing Time: {{ race.closingDateTime }}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- /.container -->
+
+    <div class="container">
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>Copyright &copy; Your Website 2014</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+{% endblock %}

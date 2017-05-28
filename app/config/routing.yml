@@ -1,0 +1,7 @@
+race_list:
+    path:     /
+    defaults: { _controller: RaceBundle:Default:index }
+
+race_data:
+    path:     /raceData
+    defaults: { _controller: RaceBundle:RaceData:index }

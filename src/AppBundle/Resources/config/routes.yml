@@ -1,0 +1,9 @@
+ladb_default:
+    resource: "@AppBundle/Controller/DefaultController"
+    type: rest
+    prefix: /
+
+race_data:
+    type:     rest
+    resource: "@AppBundle/Controller/RaceDateController"
+    prefix: /raceData
