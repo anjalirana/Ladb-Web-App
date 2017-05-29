@@ -1,6 +1,13 @@
 {% extends 'base.html.twig' %}
 
 {% block body %}
+    <script src="{{ asset('js/jquery.js') }}"></script>
+    <script src="{{ asset('js/jquery.countdown.js') }}"></script>
+
+
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+
+
     <!-- Navigation -->
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container">
@@ -24,6 +31,7 @@
 
         <div class="row">
 
+            {% block leftbar %}
             <div class="col-md-3">
                 <p class="lead">Ladbrokes</p>
                 <div class="list-group">
@@ -34,32 +42,52 @@
                     {% endfor %}
                 </div>
             </div>
+            {% endblock %}
 
             <div class="col-md-9">
 
-
-
+                {% if races is empty %}
+                    <div class="alert alert-danger">
+                        <strong>No active races found!
+                    </div>
+                {% else %}
                 <div class="row">
-
+                    {% set i = 0 %}
                     {% for race in races %}
+
                         <div class="col-sm-4 col-lg-4 col-md-4">
                             <div class="thumbnail">
 
                                 <div class="caption">
                                     <h4 class="pull-right">{{ race.code }}</h4>
-                                    <h4><a href="#">{{ race.meeting }}</a>
+                                    <h4><a href="/raceData?code={{ race.code }}">{{ race.meeting }}</a>
                                     </h4>
                                     <p>See more about the race. Click <a target="_blank" href="/raceData?code={{ race.code }}">here</a>.</p>
 
                                     <div class="ratings">
-                                        <p class="pull-right">Closing Time: {{ race.closingDateTime }}</p>
+                                        <p class="pull-right" id="countDown_{{ i }}">Time left: {{ race.closingDateTime }}</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
+
+                        <script>
+                            $('#countDown_' + {{ i }}).countdown('{{ race.closingDateTime }}', function(event) {
+                                var $this = $(this).html(event.strftime('Time left: '
+                                    + '<span>%d</span> days '
+                                    + '<span>%H</span> hr '
+                                    + '<span>%M</span> min '
+                                    + '<span>%S</span> sec'));
+                            }).on('finish.countdown', function () {
+                                window.location.href = window.location.href;
+                            });
+                        </script>
+
+                        {% set i = i+1 %}
                     {% endfor %}
 
                 </div>
+                {% endif %}
 
             </div>
 

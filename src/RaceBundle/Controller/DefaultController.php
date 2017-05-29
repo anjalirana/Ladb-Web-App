@@ -2,6 +2,7 @@
 
 namespace RaceBundle\Controller;
 
+use Circle\RestClientBundle\Exceptions\OperationTimedOutException;
 use Circle\RestClientBundle\Services\RestClient;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -10,38 +11,49 @@ use Symfony\Component\HttpFoundation\Request;
 class DefaultController extends Controller
 {
     /**
-     * @Route("/", name="homepage")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\Response
      */
     public function indexAction(Request $request)
     {
         $type = $request->get('type');
-        /** @var RestClient $restClient */
-        $restClient = $this->container->get('circle.restclient');
 
-        $types = $restClient->get('http://127.0.0.1:8000/api/types');
-        $races = $restClient->get('http://127.0.0.1:8000/api?type=' . $type);
+        $types = $this->makeGetCall('/api/types');
+
+        $races = $this->makeGetCall('/api?type=' . $type);
 
         // replace this example code with whatever you need
         return $this->render('default/index.html.twig', [
             'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
-            'types' => json_decode($types->getContent()),
-            'races' => json_decode($races->getContent())
+            'types' => $this->getJsonDecoded($types->getContent()),
+            'races' => $this->getJsonDecoded($races->getContent())
         ]);
     }
 
-    public function raceDetailAction(Request $request)
+    /**
+     * @return RestClient $restClient
+     */
+    protected  function getRestClient()
     {
-        $raceCode = $request->get('code');
-
-        /** @var RestClient $restClient */
         $restClient = $this->container->get('circle.restclient');
 
-        $raceData = $restClient->get('http://127.0.0.1:8000/api/raceDetail?code=' . $raceCode);
+        return $restClient;
+    }
 
-        return $this->render('default/raceDetail.html.twig', [
-            'base_dir' => realpath($this->getParameter('kernel.root_dir').'/..').DIRECTORY_SEPARATOR,
-            'raceDate' => json_decode($raceData->getContent())
-        ]);
+    protected function makeGetCall($endpoint)
+    {
+        $apiUrl = $this->container->getParameter('ladb_api_url');
+        $restClient = $this->getRestClient();
 
+        try {
+            return $restClient->get($apiUrl. $endpoint);
+        } catch (OperationTimedOutException $exception) {
+            throw new OperationTimedOutException();
+        }
+    }
+
+    protected function getJsonDecoded($content)
+    {
+        return json_decode($content);
     }
 }

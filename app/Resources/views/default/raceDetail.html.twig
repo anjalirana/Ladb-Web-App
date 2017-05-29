@@ -21,7 +21,11 @@
 
     <!-- Page Content -->
     <div class="container">
-
+        {% if race is empty %}
+            <div class="alert alert-danger">
+                <strong>Nothing found here! Probably the race is not open for betting anymore or you misspelled the name.
+            </div>
+        {% else %}
         <!-- Jumbotron Header -->
         <header class="jumbotron hero-spacer">
             <h1>{{ race.raceData.code }}, {{ race.raceData.meeting }}, {{ race.raceData.type }}</h1>
@@ -58,6 +62,7 @@
             {% endfor %}
 
         </div>
+        {% endif %}
         <!-- /.row -->
 
         <hr>
